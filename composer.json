@@ -1,0 +1,22 @@
+{
+    "name": "chrlvclaudiu/drupal-project-install",
+    "type": "composer-plugin",
+    "minimum-stability": "dev",
+    "license": "GPL License",
+    "require": {
+    	"composer-plugin-api":"^1.1",
+    	"php":">=5.3.0"
+    },
+    "extra": {
+    	"class": "dreamproduction\\Composer\\Install"
+    },
+    "authors": [
+        {
+            "name": "Claudiu Chirilov",
+            "email": "claudiu@dreamproduction.com"
+        }
+    ],
+    "autoload": {
+    	"psr-4": {"dreamproduction\\Composer\\": "src/"}
+    }
+}
