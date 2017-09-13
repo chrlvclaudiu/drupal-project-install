@@ -35,36 +35,38 @@ class Install implements PluginInterface, EventSubscriberInterface {
    */
   protected $executor;
 
-	public function activate(Composer $composer, IOInterface $io, Filesystem $fs) {
-	    $this->composer = $composer;
-	    $this->io = $io;
-	    $this->eventDispatcher = $composer->getEventDispatcher();
-	    $this->executor = new ProcessExecutor($this->io);
-      $this->fs = $fs;
+  public function activate(Composer $composer, IOInterface $io) {
+      $this->composer = $composer;
+      $this->io = $io;
+      $this->eventDispatcher = $composer->getEventDispatcher();
+      $this->executor = new ProcessExecutor($this->io);
+      $this->fs = new Filesystem($this->executor);
     }
 
-	public static function getSubscribedEvents() {
-	    return array(
-	        'init' => 'isProjectInstallationFinished'
-	    );
-	}
-
-	public function isProjectInstallationFinished(Event $event) {
-    $this->io->write('<warning>Checking latest stable Drupal version...</warning>');
-    // Get the latest stable Drupal version
-    $this->getDrupalStableVersion();
-	}
+  public static function getSubscribedEvents() {
+      return array(
+          'init' => 'isProjectInstallationFinished'
+      );
+  }
 
   protected function isProjectInstallationFinished() {
+    $projectInstallOK = false;
     try {
       if (!$this->hasComposerInstallRan()) {
         $this->io->write("<warning><error>composer install</error> command has not been ran yet.</warning>");
-        $this->showInstallDocumentationMessage();
+        $projectInstallOK = false;
       }
 
       if (!$this->hasVMStarted()) {
         $this->io->write("<warning><error>blt vm</error> command has not been ran yet.</warning>");
+        $projectInstallOK = false;
+      }
+      
+      if (!$projectInstallOK) {
         $this->showInstallDocumentationMessage();
+      }
+      else {
+        $this->io->write('<info>Project installation seems to be just fine :) </info>');
       }
       
     }
